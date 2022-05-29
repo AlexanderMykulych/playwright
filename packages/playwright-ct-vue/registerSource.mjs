@@ -16,7 +16,7 @@
 
 // This file is injected into the registry as text, no dependencies are allowed.
 
-import { createApp, setDevtoolsHook, h } from 'vue';
+import Vue from 'vue';
 
 const registry = new Map();
 
@@ -27,7 +27,7 @@ export function register(components) {
 
 const allListeners = [];
 
-function render(component) {
+function render(component, h) {
   if (typeof component === 'string')
     return component;
 
@@ -105,34 +105,12 @@ function render(component) {
   return wrapper;
 }
 
-function createDevTools() {
-  return {
-    emit(eventType, ...payload) {
-      if (eventType === 'component:emit') {
-        const [, componentVM, event, eventArgs] = payload;
-        for (const [wrapper, listeners] of allListeners) {
-          if (wrapper.component !== componentVM)
-            continue;
-          const listener = listeners[event];
-          if (!listener)
-            return;
-          listener(...eventArgs);
-        }
-      }
-    }
-  };
-}
-
 window.playwrightMount = async component => {
-  if (!document.getElementById('root')) {
-    const rootElement = document.createElement('div');
-    rootElement.id = 'root';
-    document.body.append(rootElement);
-  }
-  const app = createApp({
-    render: () => render(component)
-  });
-  setDevtoolsHook(createDevTools(), {});
-  app.mount('#root');
+  const vueMixin = typeof vueMixinObject === undefined ? {} : vueMixinObject;
+  new Vue({
+    ...vueMixin,
+    render: h => render(component, h),
+  }).$mount('#app');
+
   return '#root > *';
 };

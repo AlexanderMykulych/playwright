@@ -16,8 +16,9 @@
     ".": "./index.js"
   },
   "dependencies": {
-    "@vitejs/plugin-vue": "^2.3.1",
-    "@playwright/test": "1.23.0-next",
-    "vite": "^2.9.5"
+    "@playwright/test": "^1.22.2",
+    "vite": "^2.9.5",
+    "vite-plugin-vue2": "^2.0.1",
+    "vue": "^2.6.14"
   }
 }
